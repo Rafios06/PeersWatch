@@ -4,14 +4,11 @@ import argparse
 import csv
 
 def main(torrent_file_path, save_path, output_file, wait_time):
-    # Lire et décoder le fichier .torrent
     with open(torrent_file_path, 'rb') as f:
         torrent_data = lt.bdecode(f.read())
 
-    # Créer un objet torrent_info à partir des données décodées
     torrent_info_obj = lt.torrent_info(torrent_data)
 
-    # Créer une session et ajouter le torrent
     ses = lt.session()
     params = {
         'save_path': save_path,  # Chemin où le fichier sera téléchargé
@@ -21,14 +18,11 @@ def main(torrent_file_path, save_path, output_file, wait_time):
 
     h = ses.add_torrent(params)
 
-    # Attendre quelques instants pour que les pairs se connectent
     print("\nConnexion aux pairs...")
     time.sleep(wait_time)
 
-    # Récupérer la liste des pairs connectés
     peers = h.get_peer_info()
 
-    # Ouvrir un fichier CSV pour écrire les informations des pairs
     with open(output_file, 'w', newline='') as csvfile:
         fieldnames = ['IP', 'Upload (KB/s)', 'Download (KB/s)']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -50,7 +44,6 @@ def main(torrent_file_path, save_path, output_file, wait_time):
             print(f"Vitesse de téléchargement: {download_speed} KB/s")
             print("---")
 
-    # Arrêter le téléchargement après avoir récupéré les informations
     ses.remove_torrent(h)
 
 if __name__ == "__main__":
